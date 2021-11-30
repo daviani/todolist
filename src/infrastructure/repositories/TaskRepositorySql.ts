@@ -47,4 +47,59 @@ export class TaskRepositorySql implements TaskRepository {
     }
     return domainTask;
   }
+
+  async getById(id: number): Promise<Task> {
+    const prisma = new PrismaClient();
+    let data: any;
+
+    try {
+      data = await prisma.task.findUnique({
+        where: {
+          id
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+    return new Task({
+      id,
+      content: data.content,
+      createdAt: data.createdAt,
+      status: data.status,
+      updatedAt: data.updatedAt
+    });
+  }
+
+  async update(task: Task): Promise<Task> {
+    const prisma = new PrismaClient();
+    let data: any;
+
+    if (!task.id) {
+      throw new Error();
+    }
+    try {
+      data = await prisma.task.update({
+        where: {
+          id: task.id
+        },
+        data: {
+          id: task.id,
+          content: task.content,
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
+          status: task.status as Status
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+
+    return new Task({
+      id: data.id,
+      content: data.content,
+      createdAt: data.createdAt,
+      status: data.status,
+      updatedAt: data.updatedAt
+    });
+  };
 }
