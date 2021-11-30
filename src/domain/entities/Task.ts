@@ -19,4 +19,9 @@ export class Task {
     this.content = options.content;
     this.status = options.status || Status.TO_DO;
   }
+
+  close() {
+    this.updatedAt = new Date();
+    this.status = Status.DONE;
+  }
 }
