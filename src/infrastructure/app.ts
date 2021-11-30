@@ -3,6 +3,7 @@ import { P } from 'pino';
 import { listTasks } from '../domain/usecases/queries/list_tasks';
 import { createTask } from '../domain/usecases/commands/create_task';
 import { TaskRepositorySql } from './repositories/TaskRepositorySql';
+import { closeTask } from '../domain/usecases/commands/close_task';
 
 function build(logger?: P.Logger): FastifyInstance {
   const server = fastify({
@@ -38,8 +39,11 @@ function build(logger?: P.Logger): FastifyInstance {
   });
 
   // Close a task
-  server.post('/tasks/:id/close', async (request, reply) => {
-    reply.code(501).send();
+  server.post('/tasks/:id/close', async (request) => {
+    // @ts-ignore
+    const id = parseInt(request.params.id);
+    const taskRepositorySql = new TaskRepositorySql();
+    return await closeTask(id, taskRepositorySql);
   });
 
   // Reopen a task
