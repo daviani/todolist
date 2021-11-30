@@ -24,4 +24,9 @@ export class Task {
     this.updatedAt = new Date();
     this.status = Status.DONE;
   }
+
+  reopen() {
+    this.updatedAt = new Date();
+    this.status = Status.TO_DO;
+  }
 }
